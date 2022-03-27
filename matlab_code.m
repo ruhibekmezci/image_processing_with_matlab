@@ -1,56 +1,39 @@
-subplot(5,1,1);
-resim = imread('C:\Users\user\Desktop\resim1.png');
-imshow(resim);
-title('Original Image');
+resim = imread('D:\para\para3.jpg'); % resimi okuyoruz
+s = size(resim); % resimin boyutlarini aldik
+ix = s(2)/2; % orta noktalari
+iy = s(1)/2;
+toplam =0; % toplam parayi programÄ±n basinda sifirladik
+A = rgb2gray(resim); % resmi siyah beyaza cevirdik
+imshow(A);
+[c, r, m] = imfindcircles(A,[50 100]); % resimdeki yuvarlak nesneleri buluyoruz, c merkez nokta, r yaricap
+viscircles(c, r,'EdgeColor','b'); % paralarin etrafini ciziyoruz.
 
-subplot(5,1,2);
-image = rgb2gray(resim);
-level = graythresh(image);
-bw = im2bw(image, level);
-imshow(bw);
-title('2D image converted to grayscale');
-
-subplot(5,1,3);
-bw = imcomplement(bw);
-imshow(bw);
-title('Added image negativity');
-
-subplot(5,1,4);
-bw = imfill(bw,'holes');
-bw = bwareaopen(bw,30);
-imshow(bw);
-title('Stuffed the holes');
-
-subplot(5,1,5);
-se = strel('disk',11);
-bw2 = imerode(bw,se);
-imshow(bw2);
-title('coin sorting process');
-
-[B,L] = bwboundaries(bw2);
-stats = regionprops(bw2, 'Area','Centroid');
-figure(6),imshow(resim);
-
-toplam = 0;
-    for n=1:length(B)
-        a = stats(n).Area;
-        centroid=stats(n).Centroid;
-            if a > 1200
-                toplam = toplam + 1;
-                text(centroid(1),centroid(2),'1Lira');
-            elseif a > 800 && a < 1050
-                toplam = toplam + 0.5;
-                text(centroid(1),centroid(2),'50Krþ');
-            elseif a > 500 && a < 650
-                toplam = toplam + 0.25;
-                text(centroid(1),centroid(2),'25Krþ');
-            elseif a > 360 && a < 380
-                toplam = toplam + 0.10;
-                text(centroid(1),centroid(2),'10Krþ');
-            else
-                toplam = toplam + 0.05;
-                text(centroid(1),centroid(2),'5Krþ');
-            end
+for n=1:length(r) %tÃ¼m bulunan yuvarlak nesneleri taramak icin dongu
+    spara ='';     % paranin uzerine yazilacak yazi, her seferinde ici bosaltiliyor.
+    if r(n)>75 && r(n)<82   % 1 lira icin boyut limitleri
+        toplam=toplam + 100; % 1 lira 100 kurus olarak toplama eklendi
+        spara = '1 Lira';   % yazilacak metin
+    elseif r(n)>65 && r(n)<75
+        toplam=toplam + 50;
+        spara = '50 Kurus';
+    elseif r(n)>58 && r(n)<65
+        toplam=toplam + 25;
+        spara = '25 Kurus';
+    elseif r(n)>54 && r(n)<58
+        toplam=toplam + 10;
+        spara = '10 Kurus';
+    elseif r(n)>50 && r(n)<54
+        toplam=toplam + 5;
+        spara = '5 Kurus';
     end
-    
-    title(['Total Coin = ',num2str(toplam), ' Lira']);
+    if length(spara)>0 % eger para bulunmussa, yazilacak metin varsa
+        x = c(n,1);    % paranÃ„Â±n degerinin yazilacagi nokta koordinatlari
+        y = c(n,2);
+        text(x,y,spara,'FontSize', 10,'fontweight', 'bold'); % paranin degerinin yazilmasi
+    end
+end
+toplam = toplam / 100; % toplam kurus olarakti, liraya ceviriyoruz
+yaz = [num2str(toplam)  ' Lira']; %stringe ceviriyoruz
+h = text(ix,iy,yaz,'FontSize', 30,'fontweight', 'bold'); %yaziyoruz
+set(h, 'Color','w');                                     % rengini degistiriyoruz
+%set(h, 'BackgroundColor','w');          % arka planini degistiriyoruz
