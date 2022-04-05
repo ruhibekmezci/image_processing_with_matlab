@@ -1,4 +1,6 @@
-resim = imread('D:\para\para3.jpg'); % resimi okuyoruz
+cam = webcam(2) %webcam'i aktiflestiriyoruz
+preview(cam);
+resim = snapshot(cam); % resimi okuyoruz
 s = size(resim); % resimin boyutlarini aldik
 ix = s(2)/2; % orta noktalari
 iy = s(1)/2;
